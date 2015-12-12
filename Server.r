@@ -77,9 +77,6 @@ getCloud <- function (text) {
 }
 
 getStateMap <- function(jobs, state) {
-  state = 'PA'
-  x = data.frame(jobs,stringsAsFactors = FALSE)
-  
   cities = c()
   openFor = c()
   datePosted = c()
@@ -91,7 +88,7 @@ getStateMap <- function(jobs, state) {
   lats = c()
   longs = c()
   ittr = 0
-  for (i in x){
+  for (i in jobs){
     openFor[ittr] = i[1]
     cities[ittr] = i[2]
     datePosted[ittr] = i[3]
