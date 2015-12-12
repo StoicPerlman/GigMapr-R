@@ -67,59 +67,44 @@ getCloud <- function (text) {
   cloud <- as.matrix(cloud)
   cloud <- sort(rowSums(cloud),decreasing=TRUE)
   cloud <- data.frame(word = names(cloud), count=cloud,
-                        row.names = seq_along(cloud), stringsAsFactors = FALSE)
-  
+                      row.names = seq_along(cloud), stringsAsFactors = FALSE)
+
+  # replace # that was taken out in python
+  # needed because corpus could not handle #
   if ('csharp' %in% cloud$word) {
     cloud[cloud$word == 'csharp',]$word = 'c#'
   }
-  
+
   return(wordcloud(cloud$word[1:75], cloud$count[1:75], colors = brewer.pal(8,'Dark2')))
 }
 
-getStateMap <- function(jobs, state) {
-  cities = c()
-  openFor = c()
-  datePosted = c()
-  fullLocation = c()
-  company = c()
-  src = c()
-  states = c()
-  jobkeys = c()
-  lats = c()
-  longs = c()
-  ittr = 0
-  for (i in jobs){
-    openFor[ittr] = i[1]
-    cities[ittr] = i[2]
-    datePosted[ittr] = i[3]
-    fullLocation[ittr] = i[4]
-    company[ittr] = i[5] 
-    src[ittr] = i[6]
-    states[ittr] = i[7]
-    jobkeys[ittr] = i[8]
-    lats[ittr] = mean(zipcode[zipcode$city == i[2] & zipcode$state == i[7],]$latitude)
-    longs[ittr] = mean(zipcode[zipcode$city == i[2] & zipcode$state == i[7],]$longitude)
-    ittr = ittr + 1
-  }
-  jobs = data.frame(jobkey=jobkeys, company=company, city=cities, state=states, location=fullLocation, 
-                    open_for=openFor, date_poste=datePosted, sorce=src, lat=lats, long=longs)
-  
-  points <- data.frame(ddply(data.frame(lat=lats, long=longs), .(lat, long), summarise, 
+getStateMap <- function(jobs) {
+  jobs = as.data.frame(t(data.frame(jobs, stringsAsFactors = F)))
+  row.names(jobs) = NULL
+  head(jobs)
+
+  # get average city lat and long as well as count of each city
+  points <- zipcode[zipcode$state %in% jobs$state & zipcode$city %in% jobs$city,2:5]
+  points = aggregate(cbind(longitude,latitude)~., points, mean)
+  points = merge(jobs, points)[9:10]
+  points <- data.frame(ddply(data.frame(lat=points$lat, long=points$long), .(lat, long), summarise,
                              count = length(long)))
   points <- points[!is.nan(points$lat),]
-  
+
+  # state abbreviation to full map
   states = data.frame(short = state.abb, full = tolower(state.name), stringsAsFactors = FALSE)
-  
-  state_info <- map_data("state", region = states$full[states$short == state])
-  
+
+  # state geographic data
+  state_info <- map_data("state", region = states$full[states$short %in% jobs$state])
+
   map <- ggplot(state_info,aes(x=long,y=lat,group=group)) +
-    geom_polygon(aes(fill='red')) + 
+    geom_polygon(aes(fill='red')) +
     scale_size_continuous(range = c(2,10)) +
-    geom_point(data=points, aes(x=long, y=lat), size = maxPoint(sqrt(points$count)*2, 20), colour="Green", 
+    geom_point(data=points, aes(x=long, y=lat), size = maxPoint(sqrt(points$count)*2, 20), colour="Green",
                fill="Green",pch=20, alpha = .8, inherit.aes=FALSE) +
-    theme_bw() + 
+    theme_bw() +
     theme(legend.position = "", text = element_blank(), line = element_blank())
-  
+
   return(map)
 }
 
@@ -127,9 +112,3 @@ maxPoint <- function(list, max) {
   list[list > max] = max
   return(list)
 }
-
-
-#getCountryMap('Project Manager')
-jobs <- getStateInfo('C#','PA')
-#getCloud(jobs$text)
-getStateMap(jobs$jobs, 'PA')
