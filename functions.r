@@ -5,6 +5,7 @@ library(ggmap)
 library(zipcode)
 library(tm)
 library(wordcloud)
+library(plyr)
 data(zipcode)
 
 python.load('./IndeedAPICalls.py')

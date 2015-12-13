@@ -3,12 +3,25 @@ source('functions.r')
 
 shinyServer(function(input, output, session)
 {
-  search <- eventReactive(input$goButton, {
+  searchUS <- eventReactive(input$goButton, {
     getCountryMap(input$search)
   })
   
-  output$map <- renderPlot({
-    search()
+  searchState<- eventReactive(input$goButton, {
+    jobs = getStateInfo(input$search, input$nav)
+    getStateMap(jobs$jobs)
+  })
+  
+  observe({
+    input$goButton
+    output$map <- renderPlot({
+      if (input$nav == 'US' && input$search != '')
+        searchUS()
+      else if (input$nav != 'US'  && input$search != '')
+        searchState()
+      else
+        return()
+    })
   })
 })
 
