@@ -1,0 +1,12 @@
+.shiny-input-container {
+	margin:auto !important;
+	text-align: center;
+}
+
+#search, .btn, h3 {
+	display: inline !important;
+}
+
+#search {
+	float: left;
+}
