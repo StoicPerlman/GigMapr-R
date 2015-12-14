@@ -3,26 +3,44 @@ source('functions.r')
 
 shinyServer(function(input, output, session)
 {
-  searchUS <- eventReactive(input$goButton, {
-    getCountryMap(input$search)
-  })
-  
-  searchState<- eventReactive(input$goButton, {
-    jobs = getStateInfo(input$search, input$nav)
-    getStateMap(jobs$jobs)
-  })
-  
-  observe({
-    input$goButton
+  values <- reactiveValues(jobs=NULL, btnClick=0)
+
+  observeEvent(input$goButton, {
     output$map <- renderPlot({
       if (input$nav == 'US' && input$search != '')
-        searchUS()
-      else if (input$nav != 'US'  && input$search != '')
-        searchState()
+      {
+        values$jobs = getCountryInfo(input$search)
+        getCountryMap(values$jobs)
+      }
+      else if (input$nav != 'US' && input$search != '')
+      {
+        values$jobs = getStateInfo(input$search, input$nav)
+        getStateMap(values$jobs$jobs)
+      }
+      else
+        return()
+    })
+
+    output$cloud <- renderPlot({
+      if (input$nav != 'US' && input$search != '')
+      {
+        getStateCloud(values$jobs$text)
+      }
+      else
+        return()
+    })
+
+    output$stats <- renderText({
+      if (input$nav == 'US' && input$search != '')
+      {
+        getCountryStats(values$jobs)
+      }
+      else if (input$nav != 'US' && input$search != '')
+      {
+        getStateStats(values$jobs$jobs)
+      }
       else
         return()
     })
   })
 })
-
-

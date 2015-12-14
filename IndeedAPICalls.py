@@ -92,7 +92,8 @@ def GetListings(query, location):
     if count > 0:
         totalPages = floor(count / 25)
         currentPage = 0
-        while currentPage <= totalPages:
+        MAX_API_CALS = 300
+        while currentPage <= totalPages and currentPage < MAX_API_CALS:
             search_response = Search(query, location, 25, 25 * currentPage)
             for job in search_response['results']:
                 # clean title and snippet
@@ -101,9 +102,13 @@ def GetListings(query, location):
                 fullText += FillAbbr(RemoveSpecial(job["jobtitle"])) + ' '
 
                 # remove unwanted data
+                job.pop('jobkey', None)
                 job.pop('onmousedown', None)
+                job.pop('source', None)
                 job.pop('indeedApply', None)
+                job.pop('formattedRelativeTime', None)
                 job.pop('formattedLocation', None)
+                job.pop('formattedLocationFull', None)
                 job.pop('sponsored', None)
                 job.pop('url', None)
                 job.pop('noUniqueUrl', None)

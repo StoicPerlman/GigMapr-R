@@ -43,7 +43,20 @@ shinyUI(fluidPage(
         getNav('nav')
     ),
     column(10,
-      plotOutput('map', height = '600px') 
+      fluidRow(
+        column(12,
+          plotOutput('map', height = '600px')
+        ),
+        column(12,
+          column(6,
+            h3('Stats'),
+            htmlOutput('stats')
+          ),
+          column(6,
+            plotOutput('cloud', width = '100%')
+          )
+        )
+      )
     )
   )
 ))
