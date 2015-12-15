@@ -8,7 +8,7 @@ library(wordcloud)
 library(plyr)
 data(zipcode)
 
-python.load('./IndeedAPICalls.py')
+python.load('./indeed_api_calls.py')
 
 getCountryInfo <- function(search) {
   jobs<-python.call('GetEachStateCount', search)
