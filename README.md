@@ -1,4 +1,4 @@
-# IndeedMaps
+# IndeedMaps-R
 Author: Sam Kleiner
 ### R.IndeedMaps.com
 ---
