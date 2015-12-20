@@ -1,6 +1,6 @@
 # IndeedMaps
 Author: Sam Kleiner
-### indeedmaps.com
+### R.IndeedMaps.com
 ---
 #### Config
 - Fill in Indeed PUBLISHER_ID in IndeedAPICalls.py
