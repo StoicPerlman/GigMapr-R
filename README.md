@@ -1,6 +1,6 @@
-# IndeedMaps-R
+# GigMapr-R
 Author: Sam Kleiner
-### R.IndeedMaps.com
+### R.GigMapr.com
 ---
 #### Config
 - Fill in Indeed PUBLISHER_ID in IndeedAPICalls.py
