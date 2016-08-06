@@ -38,3 +38,7 @@ Install
 $ sudo apt-get update
 $ sudo apt-get -y install r-base python-dev
 ```
+
+---
+
+> Note: This site uses the indeed.com API. I am in no way associated with indeed.com.
